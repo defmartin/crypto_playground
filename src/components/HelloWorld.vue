@@ -7,25 +7,25 @@
       v-if="!account['friend']"
       v-on:click="createRadixIdentity('friend')"
     >create friend Identity</button>
-    
+
     <!-- <button v-on:click="sendAtom(1,'white')">Send atom</button> -->
     <!-- <button v-on:click="createToken">createToken</button> -->
-    
-    
+
     <button v-on:click="test">TEST</button>
 
     <div class="row">
       <div class="column" v-if="account['me']">
         <ul>
-          <b>MY ADR:</b> <button v-if="account['me']" v-on:click="recreateIdentity('me')">recreate me</button>
+          <b>MY ADR:</b>
+          <button v-if="account['me']" v-on:click="recreateIdentity('me')">recreate me</button>
           <li>{{account["me"].getAddress() }}</li>
         </ul>
 
         <ul>
-          <b>BALANCES:</b> <button v-if="account['me']" v-on:click="getMoneyFromFaucet('me')">Moar XRD</button>
+          <b>BALANCES:</b>
+          <button v-if="account['me']" v-on:click="getMoneyFromFaucet('me')">Moar XRD</button>
           <li v-for="(value, key) in balances['me']" v-bind:key="key">{{ key }}: {{ value }}</li>
         </ul>
-        
 
         <ul>
           <b>TRANSACTIONS:</b>
@@ -60,7 +60,8 @@
           v-on:click="sendToken(makeTransfer.from,makeTransfer.amount,makeTransfer.token,makeTransfer.toAdr)"
         >send</button>
 
-        <br /><br />
+        <br />
+        <br />
         <b>CREATE TOKEN:</b>
         <br />
 
@@ -68,11 +69,14 @@
           <option v-if="account['me']">me</option>
           <option v-if="account['friend']">friend</option>
         </select>
-        <input v-model="makeToken.symbol" placeholder="symbol" /><br />
+        <input v-model="makeToken.symbol" placeholder="symbol" />
+        <br />
         <input v-model="makeToken.name" placeholder="name" />
-        <input v-model="makeToken.description" placeholder="description" /><br />
+        <input v-model="makeToken.description" placeholder="description" />
+        <br />
         <input v-model="makeToken.granularity" placeholder="granularity" />
-        <input v-model="makeToken.amount" placeholder="amount" /><br />
+        <input v-model="makeToken.amount" placeholder="amount" />
+        <br />
 
         <button
           v-on:click="createToken(makeToken.from, makeToken.symbol,makeToken.name,makeToken.description,makeToken.granularity,makeToken.amount)"
@@ -80,15 +84,16 @@
       </div>
       <div class="column" v-if="account['friend']">
         <ul>
-          <b>FRIEND ADR:</b> <button v-if="account['friend']" v-on:click="recreateIdentity('friend')">recreate friend</button>
+          <b>FRIEND ADR:</b>
+          <button v-if="account['friend']" v-on:click="recreateIdentity('friend')">recreate friend</button>
           <li>{{account['friend'].getAddress() }}</li>
         </ul>
 
         <ul>
-          <b>BALANCES:</b> <button v-if="account['friend']" v-on:click="getMoneyFromFaucet('friend')">moar XRD</button>
+          <b>BALANCES:</b>
+          <button v-if="account['friend']" v-on:click="getMoneyFromFaucet('friend')">moar XRD</button>
           <li v-for="(value, key) in balances['friend']" v-bind:key="key">{{ key }}: {{ value }}</li>
         </ul>
-        
 
         <ul>
           <b>TRANSACTIONS:</b>
@@ -146,7 +151,7 @@ export default {
         from: null
       },
       makeToken: {
-          from: null,
+        from: null,
         symbol: null,
         name: null,
         description: null,
@@ -190,8 +195,6 @@ export default {
       });
     },
     createRadixIdentity(who) {
-      // Bootstrap the universe
-      radixUniverse.bootstrap(RadixUniverse.BETANET_EMULATOR);
 
       console.log(who);
 
@@ -262,57 +265,47 @@ export default {
       this.createRadixIdentity(who);
     },
 
-    sendAtom(coord, color = "black") {
-      const applicationId = "dan";
+    sendAtom(coord = "aff", color = "black") {
+      const applicationId = "aff";
 
-      const payload = JSON.stringify(coord);
+      //   const payload = JSON.stringify(coord);
 
-      const transactionStatus = RadixTransactionBuilder.createPayloadAtom(
-        this.account["me"],
-        [this.account["friend"]],
-        applicationId,
-        payload,
-        false
-      ).signAndSubmit(this.identity["me"]);
+      const toAccount = RadixAccount.fromAddress(
+        "JHWiQH3hDoKi31WxJZfp8S5js8P9hvo6BiHk3pGu4xQEHYtWN6J",
+        true
+      );
 
-      transactionStatus.subscribe({
-        next: status => {
-          console.log(status);
-          // For a valid transaction, this will print, 'FINDING_NOD   E', 'GENERATING_POW', 'SIGNING', 'STORE', 'STORED'
-        },
-        complete: () => {
-          console.log("Transaction complete");
-        },
-        error: error => {
-          console.error("Error submitting transaction", error);
-        }
-      });
+      for (let index = 0; index < 100; index++) {
+        const transactionStatus = RadixTransactionBuilder.createPayloadAtom(
+          this.account["me"],
+          [toAccount],
+          applicationId,
+          "payload",
+          false
+        ).signAndSubmit(this.identity["me"]);
+
+        transactionStatus.subscribe({
+          next: status => {
+            console.log(status);
+            // For a valid transaction, this will print, 'FINDING_NOD   E', 'GENERATING_POW', 'SIGNING', 'STORE', 'STORED'
+          },
+          complete: () => {
+            console.log("Transaction complete");
+          },
+          error: error => {
+            console.error("Error submitting transaction", error);
+          }
+        });
+      }
     },
-    sendToken(who, amount_input, token_input, toAdr) {
-      console.log(who, amount_input, token_input, toAdr);
+    sendToken(who, amount_input, token, toAdr) {
       // No need to load data from the ledger for the recipient account
       const toAccount = RadixAccount.fromAddress(toAdr, true);
-      const nativetoken = radixUniverse.nativeToken; // The default platform token
-
-      //   const token = this.identity[who].account.tokenDefinitionSystem.getTokenDefinition(token_input)
-      //   const token = `/${this.identity[who].account.getAddress()}/${token_input}`
-
-      console.log("input:", token_input);
-      const token = new RRI(
-        this.identity[who].address,
-        this._getSymbolfromKey(token_input)
-      );
-      console.log("rri:", token);
-
-      console.log("nativetoken", nativetoken);
-      console.log("token", token);
 
       const balance = new Decimal(
-        this.balances[who][this._getSymbolfromKey(token_input)]
+        this.balances[who][this._getSymbolfromKey(token)]
       );
       const amount = new Decimal(amount_input);
-
-      //   const token = radixUniverse.nativeToken // The default platform token
 
       if (!amount.greaterThan(balance)) {
         const transactionStatus = RadixTransactionBuilder.createTransferAtom(
@@ -362,7 +355,7 @@ export default {
           console.log("balance is: " + nativeTokenBalance + " XRD");
         });
     },
-    createToken(who,symbol, name, description, granularity, amount) {
+    createToken(who, symbol, name, description, granularity, amount) {
       const iconUrl = "http://a.b.com/icon.png";
 
       new RadixTransactionBuilder()
@@ -411,7 +404,10 @@ export default {
         });
     }
   },
-  created() {}
+  created() {
+      // Bootstrap the universe
+      radixUniverse.bootstrap(RadixUniverse.BETANET_EMULATOR);
+  }
 };
 </script>
 
@@ -442,7 +438,7 @@ a {
   height: 15px;
   float: left;
   box-shadow: 0px 0px 1px #42b983;
-  background-color: rgb(255, 230, 0);
+  /* background-color: rgb(255, 230, 0); */
 }
 
 .pixelDark {
