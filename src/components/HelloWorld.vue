@@ -204,11 +204,17 @@ export default {
         this.account[who].openNodeConnection();
         console.log("My account address: ", identity.account.getAddress());
 
-        this.account[who].dataSystem
-          .getApplicationData("my-test-app")
-          .subscribe(data => {
-            this.messages[who].push(JSON.parse(data.data.payload.data));
-          });
+        // this.account[who].dataSystem
+        //   .getApplicationData("my-test-app")
+        //   .subscribe(data => {
+        //     this.messages[who].push(JSON.parse(data.data.payload.data));
+        //   });
+
+        this.account[who].messagingSystem.getAllMessages().subscribe(
+            data => {
+                this.messages[who].push(data.message.content)
+            }
+        )
 
         // Subscribe for all previous transactions as well as new ones
         this.account[who].transferSystem

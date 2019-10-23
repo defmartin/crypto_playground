@@ -1,23 +1,27 @@
 <template>
-  <div v-if="color == 'black'" class="background-dark pixel"> </div>
-  <div v-else class="background-light pixel"> </div>
+  <div :style="inputStyles" > </div>
 </template>
 
 <script>
 export default {
   name: "Pixel",
   props: {
-    color: {}
+    color: String
+  },
+  computed: {
+    inputStyles() {
+      return {
+        background: this.color
+      }
+    }
+  },
+  created(){
+    //   console.log(this.color)
   }
 };
+
+
 </script>
 
 <style scoped>
-.background-dark {
-  background-color: #000;
-}
-.background-light {
-  background-color: #999999;
-}
-
 </style>

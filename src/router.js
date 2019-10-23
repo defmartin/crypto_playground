@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Router from "vue-router";
 import Home from "./views/Home.vue";
-import Face from "./views/FaceView.vue";
+import DecentralisedFace from "./views/DecentralisedFace.vue";
 
 Vue.use(Router);
 
@@ -12,21 +12,9 @@ mode: 'history',
         path: "/",
         component: Home
       },
-      {
-        path: "/home",
-        component: Home
+    {
+        path: "/face",
+        component: DecentralisedFace
       },
-    {
-      path: "/face",
-      component: Face
-    },
-    {
-      path: "/about",
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () =>
-        import(/* webpackChunkName: "about" */ "./views/About.vue")
-    },
   ]
 });
