@@ -1,5 +1,6 @@
 <template class="bg">
   <div class="hello">
+      <p> {{ pixels.length }} / {{ boardSize }} pixels</p>
     <div class="canvas">
       <div v-for="item in boardArray" v-bind:key="item.id">
         <Pixel class="small pixel" v-bind:color="item.color" />
@@ -40,6 +41,11 @@ export default {
       account: null,
       pixels: []
     };
+  },
+  computed: {
+    pixelsLength: function () {
+      return this.pixels.length
+    }
   },
   watch: {
     pixels: function(val) {
@@ -84,13 +90,6 @@ export default {
         this.pixels = Array.from(new Set(this.pixels));
 
       });
-
-      //   this.account.dataSystem.getApplicationData("dan").subscribe(data => {
-      //     const dataJSON = JSON.parse(data.data.payload.data);
-      //     this.pixels.push(dataJSON);
-      //     this.pixels = Array.from(new Set(this.pixels));
-      //     console.log(dataJSON[0])
-      //   });
     }
   },
   created() {
