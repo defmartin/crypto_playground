@@ -2,6 +2,7 @@
   <div class="hello">
     <h1>{{ msg }}</h1>
 
+    <button v-on:click="getMyTokens">show my tokens</button>
     <button v-if="!account['me']" v-on:click="createRadixIdentity('me')">create my identity</button>
     <button
       v-if="!account['friend']"
@@ -10,8 +11,6 @@
 
     <!-- <button v-on:click="sendAtom(1,'white')">Send atom</button> -->
     <!-- <button v-on:click="createToken">createToken</button> -->
-
-    <button v-on:click="test">TEST</button>
 
     <div class="row">
       <div class="column" v-if="account['me']">
@@ -79,8 +78,11 @@
         <br />
 
         <button
-          v-on:click="createToken(makeToken.from, makeToken.symbol,makeToken.name,makeToken.description,makeToken.granularity,makeToken.amount)"
-        >create</button>
+          v-on:click="createTokenSingle(makeToken.from, makeToken.symbol,makeToken.name,makeToken.description,makeToken.granularity,makeToken.amount)"
+        >create single issuance</button>
+        <button
+          v-on:click="createTokenMulti(makeToken.from, makeToken.symbol,makeToken.name,makeToken.description,makeToken.granularity,makeToken.amount)"
+        >create multi issuance</button>
       </div>
       <div class="column" v-if="account['friend']">
         <ul>
@@ -195,7 +197,6 @@ export default {
       });
     },
     createRadixIdentity(who) {
-
       console.log(who);
 
       this.loadIdentity(who).then(identity => {
@@ -204,17 +205,9 @@ export default {
         this.account[who].openNodeConnection();
         console.log("My account address: ", identity.account.getAddress());
 
-        // this.account[who].dataSystem
-        //   .getApplicationData("my-test-app")
-        //   .subscribe(data => {
-        //     this.messages[who].push(JSON.parse(data.data.payload.data));
-        //   });
-
-        this.account[who].messagingSystem.getAllMessages().subscribe(
-            data => {
-                this.messages[who].push(data.message.content)
-            }
-        )
+        this.account[who].messagingSystem.getAllMessages().subscribe(data => {
+          this.messages[who].push(data.message.content);
+        });
 
         // Subscribe for all previous transactions as well as new ones
         this.account[who].transferSystem
@@ -361,7 +354,7 @@ export default {
           console.log("balance is: " + nativeTokenBalance + " XRD");
         });
     },
-    createToken(who, symbol, name, description, granularity, amount) {
+    createTokenSingle(who, symbol, name, description, granularity, amount) {
       const iconUrl = "http://a.b.com/icon.png";
 
       new RadixTransactionBuilder()
@@ -387,32 +380,46 @@ export default {
           }
         });
     },
-    test() {
-      const account = RadixAccount.fromAddress(
-        "9ecjMNCFDSbLZxVpfbFwFTLWuL7SH3Q49uzGrpK3bUcze6CJtDr"
-      );
-      account.openNodeConnection();
+    createTokenMulti(who, symbol, name, description, granularity, amount) {
+      const iconUrl = "http://a.b.com/icon.png";
 
-      account.transferSystem.balance; // This is the account balance
-      account.transferSystem.tokenUnitsBalance; // This is the account balance in token units
-      account.transferSystem.transactions; // This is a list of transactions
-
-      // Subscribe for any new incoming transactions
-      account.transferSystem.transactionSubject.subscribe(transactionUpdate => {
-        console.log(transactionUpdate);
-      });
-
-      // Subscribe for all previous transactions as well as new ones
-      account.transferSystem
-        .getAllTransactions()
-        .subscribe(transactionUpdate => {
-          console.log(transactionUpdate);
+      new RadixTransactionBuilder()
+        .createTokenMultiIssuance(
+          this.account[who],
+          name,
+          symbol,
+          description,
+          granularity,
+          amount,
+          iconUrl
+        )
+        .signAndSubmit(this.identity[who])
+        .subscribe({
+          next: status => {
+            console.log(status);
+          },
+          complete: () => {
+            console.log("Token defintion has been created");
+          },
+          error: error => {
+            console.error("Error submitting transaction", error);
+          }
         });
+    },
+    getMyTokens() {
+      let test = radixTokenManager.tokens
+        // .then(tokenDefinition => {
+        //   console.log(tokenDefinition.totalSupply); // Check the total supply
+        // })
+        // .catch(error => {
+        //   // Token wasn't found for some reason
+        // });
+        console.log(test)
     }
   },
   created() {
-      // Bootstrap the universe
-      radixUniverse.bootstrap(RadixUniverse.BETANET_EMULATOR);
+    // Bootstrap the universe
+    radixUniverse.bootstrap(RadixUniverse.BETANET_EMULATOR);
   }
 };
 </script>

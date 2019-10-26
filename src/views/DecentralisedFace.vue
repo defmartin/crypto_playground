@@ -138,6 +138,6 @@ export default {
 }
 
 html{
-    background-color: #000;
+    /* background-color: #000; */
 }
 </style>

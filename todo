@@ -1,5 +1,10 @@
 # TODO
 
-- create multiissuance token
-- create single issuance token
-- create massive image
+- mint multi-issuance token
+- Querying the ledger for token definitions
+- create dashboard to issue tokens and manage current ones
+- show where all your tokens are
+- create an overview about balances of your token
+- crate an atomic swap
+- create a DEX
+- create a stablecoin SOX   
