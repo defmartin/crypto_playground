@@ -3,11 +3,13 @@
     <button v-on:click="createIdentity">CREATE identity</button>
     <ShowAccounts v-for="(value, key) in identities" v-bind:key="key" v-bind:data="value" />
 
-    <br /><br />
+    <br />
+    <br />
 
     <button v-if="!buttonSendToken" v-on:click="changeStatus('buttonSendToken')">show send token</button>
     <SendToken v-if="buttonSendToken" v-bind:identities="identities" />
-    <br /><br />
+    <br />
+    <br />
     <button
       v-if="!buttonCreateToken"
       v-on:click="changeStatus('buttonCreateToken')"
@@ -15,11 +17,15 @@
     <CreateToken v-if="buttonCreateToken" v-bind:identities="identities" />
     <br />
     <br />
-    <button
-      v-if="!buttonBurnTokens"
-      v-on:click="changeStatus('buttonBurnTokens')"
-    >show burn tokens</button>
+    <button v-if="!buttonBurnTokens" v-on:click="changeStatus('buttonBurnTokens')">show burn tokens</button>
     <BurnTokens v-if="buttonBurnTokens" v-bind:identities="identities" />
+    <br />
+    <br />
+    <button
+      v-if="!buttonSendMessage"
+      v-on:click="changeStatus('buttonSendMessage')"
+    >show send message</button>
+    <SendMessage v-if="buttonSendMessage" v-bind:identities="identities" />
     <br />
     <!-- <button v-if="account['me']" v-on:click="recreateIdentity('me')">recreate me</button>
     <br />
@@ -45,6 +51,7 @@ import SendToken from "@/components/SendToken.vue";
 import CreateToken from "@/components/CreateToken.vue";
 import ShowAccounts from "@/components/ShowAccounts.vue";
 import BurnTokens from "@/components/BurnTokens.vue";
+import SendMessage from "@/components/SendMessage.vue";
 
 export default {
   name: "home",
@@ -53,14 +60,16 @@ export default {
     SendToken,
     CreateToken,
     ShowAccounts,
-    BurnTokens
+    BurnTokens,
+    SendMessage
   },
   data() {
     return {
       identities: [],
       buttonSendToken: false,
       buttonCreateToken: false,
-      buttonBurnTokens: false
+      buttonBurnTokens: false,
+      buttonSendMessage: false
     };
   },
   methods: {
@@ -222,6 +231,9 @@ export default {
       }
       if (button == "buttonBurnTokens") {
         this.buttonBurnTokens = !this.buttonBurnTokens;
+      }
+      if (button == "buttonSendMessage") {
+        this.buttonSendMessage = !this.buttonSendMessage;
       }
     }
   },

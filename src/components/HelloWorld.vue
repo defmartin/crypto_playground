@@ -407,14 +407,14 @@ export default {
         });
     },
     getMyTokens() {
-      let test = radixTokenManager.tokens
-        // .then(tokenDefinition => {
-        //   console.log(tokenDefinition.totalSupply); // Check the total supply
-        // })
-        // .catch(error => {
-        //   // Token wasn't found for some reason
-        // });
-        console.log(test)
+      let test = radixTokenManager.tokens;
+      // .then(tokenDefinition => {
+      //   console.log(tokenDefinition.totalSupply); // Check the total supply
+      // })
+      // .catch(error => {
+      //   // Token wasn't found for some reason
+      // });
+      console.log(test);
     }
   },
   created() {

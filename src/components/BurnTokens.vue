@@ -2,22 +2,22 @@
   <div class="row">
     <b>BURN TOKEN:</b>
     <br />
-    <select v-model="makeBurn.fromAdr">
+    <select v-model="fromAdr">
       <option
         v-for="identity in identities"
         v-bind:key="identity.address"
         v-bind:value="identity.address"
       >{{identity.address}}</option>
     </select>
-    <select v-if="makeBurn.fromAdr" v-model="makeBurn.token">
+    <select v-if="fromAdr" v-model="token">
       <option
         v-for="token in currentIdentity.allTokens"
         v-bind:key="token"
         v-bind:value="token"
       >{{_getSymbolfromKey(token)}}</option>
     </select>
-    <input v-model="makeBurn.amount" placeholder="amount" />
-    <button v-on:click="burnToken(makeBurn.fromAdr,makeBurn.amount,makeBurn.token)">BURN</button>
+    <input v-model="amount" placeholder="amount" />
+    <button v-on:click="burnToken(fromAdr,amount,token)">BURN</button>
 
     <br />
   </div>
@@ -36,11 +36,9 @@ export default {
   },
   data() {
     return {
-      makeBurn: {
-        amount: null,
-        token: null,
-        fromAdr: null
-      }
+      amount: null,
+      token: null,
+      fromAdr: null
     };
   },
   methods: {
@@ -52,7 +50,6 @@ export default {
       const amount = new Decimal(amount_input);
 
       if (!amount.greaterThan(balance)) {
-
         RadixTransactionBuilder.createBurnAtom(
           fromIdentity["account"],
           token,
@@ -89,8 +86,8 @@ export default {
   },
   computed: {
     currentIdentity() {
-      if (this.makeBurn.fromAdr) {
-        return this._getIdentity(this.makeBurn.fromAdr);
+      if (this.fromAdr) {
+        return this._getIdentity(this.fromAdr);
       }
     }
   }

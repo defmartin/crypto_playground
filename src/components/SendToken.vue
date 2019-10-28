@@ -2,25 +2,23 @@
   <div class="row">
     <b>SEND TOKEN:</b>
     <br />
-    <select v-model="makeTransfer.fromAdr">
+    <select v-model="fromAdr">
       <option
         v-for="identity in identities"
         v-bind:key="identity.address"
         v-bind:value="identity.address"
       >{{identity.address}}</option>
     </select>
-    <input v-model="makeTransfer.amount" placeholder="amount" />
-    <select v-if="makeTransfer.fromAdr" v-model="makeTransfer.token">
+    <input v-model="amount" placeholder="amount" />
+    <select v-if="fromAdr" v-model="token">
       <option
         v-for="token in currentIdentity.allTokens"
         v-bind:key="token"
         v-bind:value="token"
       >{{_getSymbolfromKey(token)}}</option>
     </select>
-    <input v-model="makeTransfer.toAdr" placeholder="toAdr" />
-    <button
-      v-on:click="sendToken(makeTransfer.fromAdr,makeTransfer.amount,makeTransfer.token,makeTransfer.toAdr)"
-    >send</button>
+    <input v-model="toAdr" placeholder="toAdr" />
+    <button v-on:click="sendToken(fromAdr,amount,token,toAdr)">send</button>
 
     <br />
   </div>
@@ -39,12 +37,10 @@ export default {
   },
   data() {
     return {
-      makeTransfer: {
-        amount: null,
-        token: null,
-        toAdr: null,
-        fromAdr: null
-      }
+      amount: null,
+      token: null,
+      toAdr: null,
+      fromAdr: null
     };
   },
   methods: {
@@ -95,8 +91,8 @@ export default {
   },
   computed: {
     currentIdentity() {
-      if (this.makeTransfer.fromAdr) {
-        return this._getIdentity(this.makeTransfer.fromAdr);
+      if (this.fromAdr) {
+        return this._getIdentity(this.fromAdr);
       }
     }
   }
